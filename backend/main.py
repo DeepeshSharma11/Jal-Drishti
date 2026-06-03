@@ -5,6 +5,7 @@ import numpy as np
 import httpx
 import uvicorn
 import pandas as pd
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -15,6 +16,8 @@ from twilio.rest import Client as TwilioClient
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import json
+
+load_dotenv()
 
 # --- FastAPI Initialization ---
 app = FastAPI(title="JAL-DRISHTI Enterprise - High Precision Grid")

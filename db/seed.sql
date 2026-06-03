@@ -1,0 +1,40 @@
+insert into public.verified_hotspot
+  (name, loc, drainage, lat, lng, maps_link, is_verified, source)
+values
+  ('Africa Avenue Road', 'Madhav Rao Schindia Marg', '20%', 28.5778, 77.2025, 'https://www.google.com/maps?q=28.5778,77.2025', true, 'official'),
+  ('Akbar Road', 'C-Hexagon Crossing', '50%', 28.6129, 77.2295, 'https://www.google.com/maps?q=28.6129,77.2295', true, 'official'),
+  ('Anuvrat Marg', 'Lado Sarai towards City Hospital', '15%', 28.5128, 77.1864, 'https://www.google.com/maps?q=28.5128,77.1864', true, 'official'),
+  ('Ashok Vihar Road', 'Near Bartan Market', '18%', 28.6912, 77.1755, 'https://www.google.com/maps?q=28.6912,77.1755', true, 'official'),
+  ('Ashoka Road', 'Buta Singh Roundabout', '45%', 28.6212, 77.2195, 'https://www.google.com/maps?q=28.6212,77.2195', true, 'official'),
+  ('Aurobindo Marg', 'INA Towards AIIMS Underpass', '10%', 28.5674, 77.2100, 'https://www.google.com/maps?q=28.5674,77.21', true, 'official'),
+  ('Aurobindo Marg', 'IIT / Adhchini Redlight', '12%', 28.5414, 77.1979, 'https://www.google.com/maps?q=28.5414,77.1979', true, 'official'),
+  ('Aurobindo Marg', 'Malviya Nagar Metro Station', '15%', 28.5356, 77.2036, 'https://www.google.com/maps?q=28.5356,77.2036', true, 'official'),
+  ('Bhairon Marg', 'Near Bhairon Mandir', '12%', 28.6145, 77.2478, 'https://www.google.com/maps?q=28.6145,77.2478', true, 'official'),
+  ('Boulevard Road', 'Tis Hazari Metro Station', '18%', 28.6675, 77.2185, 'https://www.google.com/maps?q=28.6675,77.2185', true, 'official'),
+  ('BSZ Marg', 'ITO Chowk', '25%', 28.6302, 77.2435, 'https://www.google.com/maps?q=28.6302,77.2435', true, 'official'),
+  ('Dabri Flyover', 'Loop from Dabri side', '20%', 28.6085, 77.0864, 'https://www.google.com/maps?q=28.6085,77.0864', true, 'official'),
+  ('Dwarka Link Road', 'Dwarka Underpass', '8%', 28.5521, 77.0594, 'https://www.google.com/maps?q=28.5521,77.0594', true, 'official'),
+  ('Dwarka Road', 'Palam Flyover / Sector-1', '15%', 28.5815, 77.0755, 'https://www.google.com/maps?q=28.5815,77.0755', true, 'official'),
+  ('GT Road', 'Seelampur Flyover / Loha Pul', '7%', 28.6631, 77.2458, 'https://www.google.com/maps?q=28.6631,77.2458', true, 'official'),
+  ('GTK Road', 'Azad Pur Underpass', '10%', 28.7067, 77.1812, 'https://www.google.com/maps?q=28.7067,77.1812', true, 'official'),
+  ('GTK Road', 'Libaspur Underpass', '12%', 28.7505, 77.1444, 'https://www.google.com/maps?q=28.7505,77.1444', true, 'official'),
+  ('Hardev Sahai Road', 'Kashmere Gate Metro', '15%', 28.6668, 77.2345, 'https://www.google.com/maps?q=28.6668,77.2345', true, 'official'),
+  ('Lala Lajpat Rai Marg', 'Moolchand Underpass', '18%', 28.5658, 77.2344, 'https://www.google.com/maps?q=28.5658,77.2344', true, 'official'),
+  ('Lala Lajpat Rai Marg', 'Lodhi Flyover', '20%', 28.5878, 77.2355, 'https://www.google.com/maps?q=28.5878,77.2355', true, 'official'),
+  ('Kanjhawala Road', 'Cygnus Hospital to Karala', '10%', 28.7335, 77.0456, 'https://www.google.com/maps?q=28.7335,77.0456', true, 'official'),
+  ('MB Road', 'Pul Prahladpur Underpass', '5%', 28.4988, 77.2882, 'https://www.google.com/maps?q=28.4988,77.2882', true, 'official'),
+  ('MB Road', 'Khanpur T-Point to Hamdard', '15%', 28.5204, 77.2346, 'https://www.google.com/maps?q=28.5204,77.2346', true, 'official'),
+  ('MB Road', 'Saket Metro Station', '25%', 28.5205, 77.2007, 'https://www.google.com/maps?q=28.5205,77.2007', true, 'official'),
+  ('MG Road', 'Andheria Mor', '30%', 28.5025, 77.1705, 'https://www.google.com/maps?q=28.5025,77.1705', true, 'official'),
+  ('Mahipalpur Road', 'Mahipalpur Underpass', '15%', 28.5484, 77.1245, 'https://www.google.com/maps?q=28.5484,77.1245', true, 'official'),
+  ('Mathura Road', 'Mohan Estate / Badarpur', '22%', 28.5175, 77.2915, 'https://www.google.com/maps?q=28.5175,77.2915', true, 'official'),
+  ('Mathura Road', 'Near ZOO', '40%', 28.6125, 77.2450, 'https://www.google.com/maps?q=28.6125,77.245', true, 'official'),
+  ('Minto Road', 'Minto Bridge Underpass', '5%', 28.6338, 77.2307, 'https://www.google.com/maps?q=28.6338,77.2307', true, 'official')
+on conflict (name, lat, lng) do update
+set
+  loc = excluded.loc,
+  drainage = excluded.drainage,
+  maps_link = excluded.maps_link,
+  is_verified = true,
+  source = 'official',
+  updated_at = now();
