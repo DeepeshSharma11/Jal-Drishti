@@ -1,4 +1,5 @@
 import datetime
+import time
 import math
 import os
 import numpy as np
@@ -31,6 +32,27 @@ app.add_middleware(
     allow_headers=["*"],
     expose_headers=["*"],
 )
+
+@app.middleware("http")
+async def log_requests(request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    duration = time.time() - start_time
+    
+    # ANSI color coding for status codes
+    status_code = response.status_code
+    if status_code >= 500:
+        status_color = "\033[91m"  # Red
+    elif status_code >= 400:
+        status_color = "\033[93m"  # Yellow
+    elif status_code >= 300:
+        status_color = "\033[94m"  # Blue
+    else:
+        status_color = "\033[92m"  # Green
+    reset_color = "\033[0m"
+    
+    print(f"{status_color}[{status_code}]{reset_color} {request.method} {request.url.path} - {duration:.4f}s")
+    return response
 
 # ==========================================
 # 🚀 WEBSOCKET MANAGER (Instant Update)
