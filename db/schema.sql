@@ -40,6 +40,7 @@ create table if not exists public.hotspots (
   maps_link text,
   is_verified boolean not null default false,
   source text not null default 'user',
+  user_id uuid references auth.users(id) on delete set null,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint hotspots_lat_range check (lat between -90 and 90),
@@ -87,8 +88,8 @@ for select using (true);
 
 drop policy if exists "hotspots_public_insert" on public.hotspots;
 create policy "hotspots_public_insert" on public.hotspots
-for insert to anon, authenticated
-with check (is_verified = false and source = 'user');
+for insert to authenticated
+with check (is_verified = false and source = 'user' and (user_id is null or auth.uid() = user_id));
 
 drop policy if exists "hotspots_authenticated_update" on public.hotspots;
 create policy "hotspots_authenticated_update" on public.hotspots

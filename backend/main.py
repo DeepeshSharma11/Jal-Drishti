@@ -6,7 +6,7 @@ import httpx
 import uvicorn
 import pandas as pd
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Query
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect, Query, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, Dict, List
@@ -138,6 +138,18 @@ class LocationData(BaseModel):
     latitude: float
     longitude: float
 
+async def get_current_user(authorization: Optional[str] = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing or invalid authorization header")
+    token = authorization.split(" ")[1]
+    try:
+        response = supabase.auth.get_user(token)
+        if not response or not response.user:
+            raise HTTPException(status_code=401, detail="Invalid token or session expired")
+        return response.user
+    except Exception as e:
+        raise HTTPException(status_code=401, detail=f"Authentication failed: {str(e)}")
+
 # ==========================================
 # 📡 ENDPOINTS
 # ==========================================
@@ -217,9 +229,10 @@ async def get_hotspots(simulate: bool = False, user_id: Optional[str] = None):
     return {"sidebar_data": sidebar_data, "map_data": map_markers}
 
 @app.post("/api/add-hotspot")
-async def add_hotspot(data: dict):
+async def add_hotspot(data: dict, current_user = Depends(get_current_user)):
     try:
         data["is_verified"] = False 
+        data["user_id"] = current_user.id
         supabase.table("hotspots").insert(data).execute()
         # Broadcast Instant Refresh
         await manager.broadcast({"type": "NEW_REPORT"})
@@ -228,8 +241,8 @@ async def add_hotspot(data: dict):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/grant-location")
-async def grant_location(data: LocationData):
-    user_sessions[data.user_id] = {
+async def grant_location(data: LocationData, current_user = Depends(get_current_user)):
+    user_sessions[current_user.id] = {
         "latitude": data.latitude, 
         "longitude": data.longitude, 
         "last_updated": datetime.datetime.now()

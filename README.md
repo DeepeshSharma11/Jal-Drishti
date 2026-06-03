@@ -4,6 +4,8 @@ Jal Drishti is a real-time waterlogging detection and hotspot monitoring platfor
 
 ## Features
 
+- **User Authentication & Profiles**: Secure sign-up and login workflows powered by Supabase Auth with custom user profile displays.
+- **Backend Route Security**: Custom FastAPI JWT verification dependency to protect data submission and location synchronization routes.
 - **Live Hotspot Map**: Interactive Leaflet map displaying official verified hotspots and user-reported waterlogging sites.
 - **Machine Learning Risk Analysis**: Real-time flooding risk prediction (Critical, High, Medium, Low) powered by a Random Forest classifier in the backend, utilizing current rainfall data and drainage efficiency.
 - **Dynamic Weather Integration**: Fetches real-time localized weather and precipitation stats using the OpenWeatherMap API.

@@ -528,3 +528,141 @@ body, html, #root {
   background: white !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
 }
+
+/* --- Authentication System Styling --- */
+.auth-card {
+  max-width: 400px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+  backdrop-filter: blur(8px);
+}
+
+.auth-title {
+  color: var(--accent);
+  font-weight: 800;
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+
+.auth-subtitle {
+  color: #64748b;
+  font-size: 0.85rem;
+  margin-bottom: 24px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input-group label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.input-group input {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: var(--dark);
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: 0.2s;
+  outline: none;
+}
+
+.input-group input:focus {
+  border-color: var(--accent);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.auth-btn {
+  margin-top: 8px;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.auth-btn:hover {
+  opacity: 0.9;
+}
+
+.auth-btn:active {
+  transform: scale(0.98);
+}
+
+.auth-btn:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+.auth-toggle {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.auth-toggle span {
+  color: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* User Profile Header (Dashboard) */
+.user-profile-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.user-email-header {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.logout-header-btn {
+  background: transparent;
+  color: #f1f5f9;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logout-header-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+@media (max-width: 768px) {
+  .user-email-header {
+    max-width: 90px;
+  }
+}

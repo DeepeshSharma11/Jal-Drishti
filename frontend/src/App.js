@@ -27,6 +27,17 @@ const supabase = createClient(
   SUPABASE_KEY
 );
 
+// --- 🛰️ AXIOS AUTH INTERCEPTOR ---
+axios.interceptors.request.use(async (config) => {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session?.access_token) {
+    config.headers.Authorization = `Bearer ${session.access_token}`;
+  }
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
+
 // --- 🎨 CUSTOM MARKERS (Custom icons design karne ke liye) ---
 const createPinIcon = (color) => {
   return new L.DivIcon({
@@ -102,7 +113,15 @@ function App() {
   const markerRefs = useRef({}); 
   const fileInputRef = useRef(null);
   const lastTapRef = useRef({ time: 0, count: 0 });
-  const [userId] = useState(() => localStorage.getItem('jal_drishti_user_id') || 'user_' + Math.random().toString(36).substr(2, 9));
+
+  // --- 🔒 AUTHENTICATION STATE ---
+  const [session, setSession] = useState(null);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [authLoading, setAuthLoading] = useState(false);
+
+  const userId = session?.user?.id || 'anonymous';
 
   // --- 🚀 DATA FETCH KARNE KE LIYE ---
   const fetchData = useCallback(async () => {
@@ -115,6 +134,63 @@ function App() {
       setWeather(wRes.data);
     } catch (err) { console.error("API Fetch Error", err); }
   }, [isSimulating, userId]);
+
+  // --- 🔒 AUTHENTICATION LISTENERS & HANDLERS ---
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleAuth = async (e) => {
+    e.preventDefault();
+    if (!email || !password) {
+      toast.warn("Kripya email aur password bharein.");
+      return;
+    }
+    setAuthLoading(true);
+    try {
+      if (isSignUp) {
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+        if (error) throw error;
+        if (data.user && data.session) {
+          toast.success("Registration safal raha! Aap logged in hain.");
+        } else {
+          toast.info("Verification link aapke email par bheja gaya hai!");
+        }
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        toast.success("Login safal raha!");
+      }
+    } catch (err) {
+      toast.error(err.message || "Auth fail ho gaya");
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      setHasLocationPermission(false);
+      toast.success("Sign out safal raha!");
+    } catch (err) {
+      toast.error("Logout fail ho gaya");
+    }
+  };
 
   // --- 📡 REAL-TIME UPDATES (WebSocket) ---
   useEffect(() => {
@@ -224,7 +300,7 @@ function MapEvents() {
 
       await axios.post(`${API_BASE_URL}/api/add-hotspot`, {
         name: name, lat: clickedCoords.lat, lng: clickedCoords.lng, drainage: "20%",
-        image_url: urlData.publicUrl, is_verified: false 
+        image_url: urlData.publicUrl, is_verified: false, user_id: userId
       });
       setClickedCoords(null);
       toast.success("Broadcast safal raha!");
@@ -236,22 +312,67 @@ function MapEvents() {
       <ToastContainer theme="dark" position="bottom-right" />
       <input type="file" accept="image/*" capture="environment" ref={fileInputRef} className="hidden" style={{display:'none'}} onChange={handleFileUpload} />
 
-      {!hasLocationPermission && (
+      {!session ? (
+        <div className="permission-overlay">
+          <div className="permission-card auth-card">
+            <h2 className="auth-title">JAL-DRISHTI Enterprise</h2>
+            <p className="auth-subtitle">Pan-India Real-Time Flood Monitoring System</p>
+            <form onSubmit={handleAuth} className="auth-form">
+              <div className="input-group">
+                <label>Email Address</label>
+                <input 
+                  type="email" 
+                  placeholder="name@example.com" 
+                  value={email} 
+                  onChange={(e) => setEmail(e.target.value)} 
+                  required 
+                />
+              </div>
+              <div className="input-group">
+                <label>Password</label>
+                <input 
+                  type="password" 
+                  placeholder="••••••••" 
+                  value={password} 
+                  onChange={(e) => setPassword(e.target.value)} 
+                  required 
+                />
+              </div>
+              <button type="submit" className="sync-btn auth-btn" disabled={authLoading}>
+                {authLoading ? "Kripya Pratiksha Karein..." : (isSignUp ? "Account Banayein" : "Sign In Karein")}
+              </button>
+            </form>
+            <div className="auth-toggle">
+              {isSignUp ? (
+                <p>Pehle se account hai? <span onClick={() => setIsSignUp(false)}>Sign In</span></p>
+              ) : (
+                <p>Naya account? <span onClick={() => setIsSignUp(true)}>Account Banayein</span></p>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : !hasLocationPermission ? (
         <div className="permission-overlay">
           <div className="permission-card">
             <h2 style={{color: '#3b82f6', fontWeight: '800'}}>JAL-DRISHTI Enterprise</h2>
-            <p>Pan-India Real-Time Flood Monitoring System</p>
+            <p style={{marginBottom: '0.5rem'}}>Pan-India Real-Time Flood Monitoring System</p>
+            <p style={{fontSize: '0.9rem', color: '#64748b', marginBottom: '1.5rem'}}>Logged in: <strong>{session.user.email}</strong></p>
             <button className="sync-btn" onClick={startTracking}>Live GPS Sync Karein</button>
+            <button className="clear-btn" onClick={handleSignOut} style={{marginTop: '10px', background: 'transparent', color: '#94a3b8', border: '1px solid #334155', width: '100%'}}>Sign Out</button>
           </div>
         </div>
-      )}
+      ) : null}
 
-      {hasLocationPermission && (
+      {session && hasLocationPermission && (
         <>
           <header className="header">
             <div className="logo-section"><span className="live-indicator"></span><h2 className="title">JAL-DRISHTI</h2></div>
             <div className="header-controls">
               {weather && <div className="weather-glass">🌡️ {Math.round(weather.main?.temp || 0)}°C</div>}
+              <div className="user-profile-header">
+                <span className="user-email-header">👤 {session.user.email}</span>
+                <button className="logout-header-btn" onClick={handleSignOut}>Logout</button>
+              </div>
               <button className={`sim-button ${isSimulating ? 'btn-stop' : 'btn-start'}`} onClick={() => setIsSimulating(!isSimulating)}>
                 {isSimulating ? "🛑 ROKEIN" : "🔮 SIMULATE"}
               </button>
