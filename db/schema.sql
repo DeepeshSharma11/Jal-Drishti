@@ -49,6 +49,8 @@ create table if not exists public.hotspots (
   constraint hotspots_source_check check (source in ('official', 'user'))
 );
 
+alter table public.hotspots add column if not exists user_id uuid references auth.users(id) on delete set null;
+
 create index if not exists idx_verified_hotspot_location on public.verified_hotspot (lat, lng);
 create index if not exists idx_verified_hotspot_verified on public.verified_hotspot (is_verified);
 create index if not exists idx_verified_hotspot_created_at on public.verified_hotspot (created_at desc);
