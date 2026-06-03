@@ -1,0 +1,34 @@
+Memory.md
+
+# Dependencies
+node_modules/
+venv/
+.venv/
+
+# Build outputs
+build/
+dist/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Environment and local config
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Preserved nested git metadata
+frontend/.git.backup/
