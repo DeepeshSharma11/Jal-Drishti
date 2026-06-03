@@ -9,9 +9,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 // --- 🌐 NETWORK CONFIG ---
-const LAPTOP_IP = "10.239.46.196"; 
-const API_BASE_URL = `http://${LAPTOP_IP}:5000`;
-const WS_URL = `ws://${LAPTOP_IP}:5000/ws`; 
+const LAPTOP_IP = window.location.hostname || "localhost"; 
+const API_BASE_URL = `http://${LAPTOP_IP}:8000`;
+const WS_URL = `ws://${LAPTOP_IP}:8000/ws`; 
 
 axios.defaults.timeout = 10000;
 

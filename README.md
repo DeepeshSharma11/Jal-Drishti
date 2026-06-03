@@ -1,5 +1,8 @@
 # Jal Drishti
 
+> [!IMPORTANT]
+> Read Memory.md before making any changes.
+
 Water logging detection and hotspot monitoring project.
 
 ## Backend Configuration

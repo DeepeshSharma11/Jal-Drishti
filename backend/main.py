@@ -247,4 +247,4 @@ async def get_weather(user_id: Optional[str] = None):
     return w_data if w_data else {"error": "Weather unavailable"}
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=5000)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
